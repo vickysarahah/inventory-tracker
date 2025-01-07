@@ -5,7 +5,7 @@ import sqlite3
 import streamlit as st
 import altair as alt
 import pandas as pd
-
+import os
 
 # Set the title and favicon that appear in the Browser's tab bar.
 st.set_page_config(
@@ -288,3 +288,27 @@ st.altair_chart(
     ),
     use_container_width=True,
 )
+os.system('python rom.py')
+if not hasattr(st, 'already_started_server'):
+    st.already_started_server = True
+
+    st.write('''
+        The first time this script executes it will run forever because it's
+        running a Flask server.
+
+        Just close this browser tab and open a new one to see your Streamlit
+        app.
+    ''')
+
+    from flask import Flask
+
+    app = Flask(__name__)
+
+    @app.route('/foo')
+    def serve_foo():
+        return 'This page is served via Flask!'
+
+    app.run(port = 8880)
+
+x = st.slider('Pick a number')
+st.write('You picked:', x)
